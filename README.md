@@ -1,4 +1,4 @@
-# Data Cleaning and Extraction Project
+# Multinational Retail Data Centralisation project
 
 ## Table of Contents
 - [Project Description](#project-description)

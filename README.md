@@ -49,6 +49,3 @@ This will trigger the data extraction, cleaning, and uploading processes as defi
 
 ## License
 [MIT License](LICENSE)
-```
-Replace [repository-url] and [repository-name] with the actual URL and name of your repository. This README template should now correctly display code blocks and other Markdown elements when viewed on GitHub.
-```

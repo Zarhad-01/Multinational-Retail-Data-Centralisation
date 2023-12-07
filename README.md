@@ -29,7 +29,8 @@ pip install pandas numpy sqlalchemy psycopg2 boto3 pyyaml tabula-py requests
 
 3. **Database Configuration:**
 - Create a PostgreSQL database.
-- Update the `db_creds.yaml` file with your database credentials.
+- Create a `db_creds.yaml` file with your remote database credentials within the python folder.
+- Update the `db_creds_local.yaml` file with your local database credentials within the python folder.
 
 4. **AWS Configuration:**
 - Ensure you have AWS credentials set up for accessing RDS and S3 services. This typically involves setting up `~/.aws/credentials`.

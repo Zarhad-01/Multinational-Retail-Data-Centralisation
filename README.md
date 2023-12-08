@@ -10,11 +10,10 @@
 ## Project Description
 This project focuses on extracting, cleaning, and processing data from various sources, including AWS RDS, S3 buckets, and external APIs. The primary aim is to prepare the data for further analysis or database storage, ensuring data integrity and consistency.
 
-Key learnings and challenges in this project include working with different data formats (CSV, JSON), handling database connections, and implementing data cleaning techniques using Pandas in Python.
+The project has expanded to include database design and management for a multinational retail corporation. This includes the creation of a star-schema database, aiding in data centralisation. It involves designing tables, establishing relationships, and ensuring data integrity through primary and foreign key constraints.
 
-This project now encompasses a comprehensive approach to data management, extending its reach to database design and management for a multinational retail corporation. The focus has expanded to include the creation of a star-schema database, aiding in data centralisation. This includes designing tables, establishing relationships, and ensuring data integrity through primary and foreign key constraints.
+Key additions include SQL scripts for table creation, data integrity enforcement, schema management, and complex queries for business insights. These developments enhance the project's aim to facilitate robust data analysis and storage, ensuring consistent and reliable data quality.
 
-Key additions include SQL scripts for table creation, data integrity enforcement, and schema management. These developments enhance the project's aim to facilitate robust data analysis and storage, ensuring consistent and reliable data quality.
 
 ## Installation
 
@@ -57,6 +56,8 @@ Use PGAdmin or a similar PostgreSQL client to run the SQL scripts in the followi
 2. Execute scripts `2_dim_users_table.sql` through `7_card_details.sql` to set up the respective dimension tables.
 3. Apply `8_primary_keys.sql` to add primary keys to the dimension tables.
 4. Finally, run `9_star_schema.sql` to establish the foreign key relationships and complete the star-schema.
+5. Additional complex queries such as `1_stores_by_country.sql`, `2_most_stores_location.sql`, `3_sales_by_month.sql`, `4_online_sales.sql`, `5_percentage_sales.sql`, `6_sales.sql`, `7_staff_headcount.sql`, `8_german_stores.sql`, and `9_sales_speed.sql` provide deep insights into various business metrics.
+
 
 ## File Structure
 - `data_cleaning.py`: Contains the `DataCleaning` class with methods for cleaning various data tables.

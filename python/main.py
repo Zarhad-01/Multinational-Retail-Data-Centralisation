@@ -12,12 +12,12 @@ if CREDS:
     ENGINE = create_engine(f"postgresql+psycopg2://{CREDS['USER']}:{CREDS['PASSWORD']}@{CREDS['HOST']}:{CREDS['PORT']}/{CREDS['DATABASE']}")
 
 def main():
-    #dim_users()
-    #dim_card_details()
-    #dim_store_details()
+    dim_users()
+    dim_card_details()
+    dim_store_details()
     dim_products()
-    #orders_table()
-    #dim_date_times()
+    orders_table()
+    dim_date_times()
 
 def dim_users():
     remote_engine = CONNECTOR.init_db_engine()
@@ -31,7 +31,6 @@ def dim_card_details():
     card_data = EXTRACTOR.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
     clean_card_data = CLEANER.clean_card_data(card_data)
     CONNECTOR.upload_to_db(clean_card_data, "dim_card_details", ENGINE) 
-
 
 def dim_store_details():
     api_key = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}

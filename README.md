@@ -46,7 +46,7 @@ pip install pandas numpy sqlalchemy psycopg2 boto3 pyyaml tabula-py requests
 ### Python Scripts:
 To run the data cleaning and extraction scripts, execute the `main.py` file:
 ```
-python main.py
+python python/main.py
 ```
 This will trigger the data extraction, cleaning, and uploading processes as defined in the main function.
 
@@ -60,10 +60,44 @@ Use PGAdmin or a similar PostgreSQL client to run the SQL scripts in the followi
 
 
 ## File Structure
-- `data_cleaning.py`: Contains the `DataCleaning` class with methods for cleaning various data tables.
-- `data_extraction.py`: Includes the `DataExtractor` class for extracting data from RDS, S3, and APIs.
-- `database_utils.py`: Defines the `DatabaseConnector` class for database connection and operations.
-- `main.py`: The main script to run the data processing tasks.
+The project is organized into the following directories and files:
+
+### Python Scripts:
+- `python/` - Contains Python scripts for data cleaning and extraction.
+  - `data_cleaning.py` - Defines the `DataCleaning` class with methods to clean data.
+  - `data_extraction.py` - Contains the `DataExtractor` class for extracting data from various sources.
+  - `database_utils.py` - Provides the `DatabaseConnector` class for database operations.
+  - `db_creds_local.yaml` - Stores local database credentials (do not commit to version control).
+  - `db_creds.yaml` - Stores remote database credentials (ensure this is in `.gitignore`).
+  - `main.py` - Main script to run the data processing tasks.
+
+### SQL Scripts:
+- `sql/`
+  - `create_database_schema/` - Scripts for creating the database schema.
+    - `1_orders_table.sql` - Creates the orders table.
+    - `2_dim_users_table.sql` - Sets up the users table.
+    - `3_store_details.sql` - Defines the store details table.
+    - `4_products.sql` - Creates the products table.
+    - `5_products.sql` - Additional script for product-related operations.
+    - `6_date_times.sql` - Sets up the event date table.
+    - `7_card_details.sql` - Defines the card details table.
+    - `8_primary_keys.sql` - Adds primary keys to the tables.
+    - `9_star_schema.sql` - Finalizes the star schema with foreign key constraints.
+  - `querying_the_data/` - Scripts for querying the database to extract insights.
+    - `1_stores_by_country.sql` - Retrieves store count by country.
+    - `2_most_stores_location.sql` - Finds the location with the most stores.
+    - `3_sales_by_month.sql` - Determines sales figures by month.
+    - `4_online_sales.sql` - Calculates online sales.
+    - `5_percentage_sales.sql` - Computes the percentage of total sales.
+    - `6_sales.sql` - General sales query.
+    - `7_staff_headcount.sql` - Counts staff by location.
+    - `8_german_stores.sql` - Assesses German store sales.
+    - `9_sales_speed.sql` - Evaluates the speed of sales.
+
+
+### Miscellaneous:
+- `.gitignore` - Specifies files to be ignored by version control.
+- `README.md` - Project documentation in Markdown format.
 
 ## License
 [MIT License](LICENSE)

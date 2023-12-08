@@ -30,9 +30,11 @@ class DataCleaning:
         regex_expression = r'^(?:(?:\(?(?:0(?:0|11)\)?[\s-]?\(?|\+)44\)?[\s-]?(?:\(?0\)?[\s-]?)?)|(?:\(?0))(?:(?:\d{5}\)?[\s-]?\d{4,5})|(?:\d{4}\)?[\s-]?(?:\d{5}|\d{3}[\s-]?\d{3}))|(?:\d{3}\)?[\s-]?\d{3}[\s-]?\d{3,4})|(?:\d{2}\)?[\s-]?\d{4}[\s-]?\d{4}))(?:[\s-]?(?:x|ext\.?|\#)\d{3,4})?$'
         legacy_users_data.loc[~legacy_users_data['phone_number'].str.match(regex_expression), 'phone_number'] = np.nan
 
+        # Correct country_code values
+        legacy_users_data['country_code'].replace('GGB', 'GB', inplace=True)
 
-        # Drop rows filled with wrong information
-        legacy_users_data.drop(legacy_users_data.columns[0], axis=1, inplace=True)
+        # Deleting the garbled rows
+        legacy_users_data = legacy_users_data[legacy_users_data['country_code'].str.len() <= 2]
 
         return legacy_users_data
 
@@ -40,6 +42,7 @@ class DataCleaning:
         """
         This function is used to clean the card data table.
         If card_data_table is not provided, it extracts data from the provided PDF link.
+        Allows card number with length 16 and 19
         """
         if card_data_table is None:
             card_data_table = DataExtractor().retrieve_pdf_data("https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf")
@@ -48,9 +51,8 @@ class DataCleaning:
         card_data_table.replace('NULL', np.nan, inplace=True)
         card_data_table['card_number'] = card_data_table['card_number'].astype(str).str.replace('\W', '', regex=True)
 
-        # Remove rows where 'card_number' contains alphabetic characters, question marks, or is not 16 characters long
-        card_data_table = card_data_table[~card_data_table['card_number'].str.contains('[a-zA-Z?]', na=False) & (card_data_table['card_number'].str.len() == 16)]
-
+        # Remove rows where 'card_number' contains alphabetic characters, question marks, or is not 16/19 characters long
+        card_data_table = card_data_table[~card_data_table['card_number'].str.contains('[a-zA-Z?]', na=False) & card_data_table['card_number'].str.len().isin([16, 19])]
 
         # Convert 'date_payment_confirmed' to datetime and handle errors
         card_data_table['date_payment_confirmed'] = pd.to_datetime(card_data_table['date_payment_confirmed'], infer_datetime_format=True, errors='coerce')
@@ -64,44 +66,70 @@ class DataCleaning:
         """
         Clean the store data table
         """
-
         store_data_table = store_data_table.reset_index(drop=True)
 
-        store_data_table.replace('NULL',np.nan,inplace=True)
+        # Replace 'NULL' and 'N/A' with np.nan
+        store_data_table.replace(['NULL', 'N/A'], np.nan, inplace=True)
 
-        store_data_table.drop(store_data_table.columns[0], axis=1,inplace=True)
-        store_data_table.drop(columns='lat',inplace=True)
-        
+        store_data_table.drop(store_data_table.columns[0], axis=1, inplace=True)
+        store_data_table.drop(columns='lat', inplace=True)
+
         store_data_table['opening_date'] = pd.to_datetime(store_data_table['opening_date'], errors='coerce')
         store_data_table['staff_numbers'] = pd.to_numeric(store_data_table['staff_numbers'], errors='coerce')
-        store_data_table.dropna(subset=['staff_numbers'],axis=0,inplace=True)
+        store_data_table.dropna(subset=['staff_numbers'], axis=0, inplace=True)
 
         store_data_table['continent'] = store_data_table['continent'].str.replace('eeEurope', 'Europe')
         store_data_table['continent'] = store_data_table['continent'].str.replace('eeAmerica', 'America')
+
+        # Convert 'longitude' to numeric, replace non-numeric values with NaN
+        store_data_table['longitude'] = pd.to_numeric(store_data_table['longitude'], errors='coerce')
 
         return store_data_table
     
     def convert_product_weights(self, products_df):
         """
-        Converts weights in the products DataFrame into kilograms.
+        Converts weights in the products into kilograms.
 
         Args:
-        products_df (DataFrame): DataFrame of products.
+        products_df (DataFrame): Product data.
 
         Returns:
-        DataFrame: Updated DataFrame with weights converted to kilograms.
+        DataFrame: Updated with weights converted to kilograms.
         """
         conversion_factors = {'kg': 1, 'g': 0.001, 'ml': 0.001, 'oz': 0.0283495}
 
         def convert_weight(weight):
-            numeric_part = ''.join([char for char in weight if char.isdigit() or char == '.'])
-            if not numeric_part:
-                return None
-            numeric_weight = float(numeric_part)
-            for unit in conversion_factors:
-                if unit in weight:
-                    return numeric_weight * conversion_factors[unit]
-            return None
+            # Check if weight is NaN or not a string
+            if pd.isnull(weight) or not isinstance(weight, str):
+                return np.nan
+            
+            # Handle products with multiple items, e.g., '12 x 100g'
+            quantity = 1
+            if 'x' in weight:
+                parts = weight.split('x')
+                if len(parts) == 2:
+                    quantity, weight = parts
+                    try:
+                        quantity = float(quantity.strip())
+                    except ValueError:
+                        return np.nan
+
+            # Remove all whitespace and convert to lowercase
+            weight = weight.replace(' ', '').lower()
+
+            # Match the numeric part and the unit
+            match = re.match(r'(\d+(\.\d+)?)(\D+)', weight)
+            if match:
+                numeric_part, unit = match.groups()[0], match.groups()[2]
+                numeric_weight = float(numeric_part) * quantity
+                # Convert weight to kilograms
+                for unit_key in conversion_factors:
+                    if unit_key in unit:
+                        return numeric_weight * conversion_factors[unit_key]
+                return np.nan
+            else:
+                # If there was no match, return NaN
+                return np.nan
 
         products_df['weight'] = products_df['weight'].apply(convert_weight)
         return products_df
@@ -158,6 +186,10 @@ class DataCleaning:
         # Removing specified columns
         columns_to_remove = ['first_name', 'last_name', '1', 'level_0']
         df.drop(columns=columns_to_remove, inplace=True, errors='ignore')
+
+        # Filter out rows where 'card_number' is not 16 digits
+        if 'card_number' in df.columns:
+            df = df[df['card_number'].astype(str).str.len() == 16]
 
         # Set index if 'index' column exists
         if 'index' in df.columns:

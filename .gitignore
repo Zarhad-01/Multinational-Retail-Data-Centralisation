@@ -1,2 +1,4 @@
 python/db_creds.yaml
 logfile
+.vscode
+python/__pycache__

@@ -9,13 +9,29 @@ EXTRACTOR = DataExtractor()
 CLEANER = DataCleaning()
 CREDS = CONNECTOR.read_local_creds()
 if CREDS:
-    ENGINE = create_engine(f"postgresql+psycopg2://{CREDS['RDS_USER']}:{CREDS['RDS_PASSWORD']}@{CREDS['RDS_HOST']}:{CREDS['RDS_PORT']}/{CREDS['RDS_DATABASE']}")
+    ENGINE = create_engine(f"postgresql+psycopg2://{CREDS['USER']}:{CREDS['PASSWORD']}@{CREDS['HOST']}:{CREDS['PORT']}/{CREDS['DATABASE']}")
 
 def main():
-    # dim_store_details()
-    # dim_products()
-    # orders_table()
-    dim_date_times()
+    #dim_users()
+    #dim_card_details()
+    #dim_store_details()
+    dim_products()
+    #orders_table()
+    #dim_date_times()
+
+def dim_users():
+    remote_engine = CONNECTOR.init_db_engine()
+    tables = CONNECTOR.list_db_tables(remote_engine)
+
+    user_data = EXTRACTOR.read_rds_table(tables[1], remote_engine)
+    clean_user_data = CLEANER.clean_user_data(user_data)
+    CONNECTOR.upload_to_db(clean_user_data, "dim_user_table", ENGINE)
+
+def dim_card_details():
+    card_data = EXTRACTOR.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
+    clean_card_data = CLEANER.clean_card_data(card_data)
+    CONNECTOR.upload_to_db(clean_card_data, "dim_card_details", ENGINE) 
+
 
 def dim_store_details():
     api_key = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
@@ -29,6 +45,7 @@ def dim_store_details():
 
 def dim_products():
     s3_data = EXTRACTOR.extract_from_s3()
+    s3_data = CLEANER.convert_product_weights(s3_data)
     clean_s3_data = CLEANER.clean_products_data(s3_data)
     CONNECTOR.upload_to_db(clean_s3_data, 'dim_products', ENGINE)
 

@@ -24,8 +24,8 @@ Key additions include SQL scripts for table creation, data integrity enforcement
 
 2. **Clone the Repository:**
 ```
-git clone [repository-url]
-cd [repository-name]
+git clone https://github.com/Zarhad-01/Multinational-Retail-Data-Centralisation
+cd Multinational-Retail-Data-Centralisation
 ```
 
 3. **Install Required Python Packages:**

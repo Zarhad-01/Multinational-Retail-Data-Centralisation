@@ -25,11 +25,17 @@ def dim_users():
 
     user_data = EXTRACTOR.read_rds_table(tables[1], remote_engine)
     clean_user_data = CLEANER.clean_user_data(user_data)
+
+    user_data.to_csv("original-database-tables/user_data.csv")
+    clean_user_data.to_csv("completed-database-tables/dim_user_table.csv")
     CONNECTOR.upload_to_db(clean_user_data, "dim_user_table", ENGINE)
 
 def dim_card_details():
     card_data = EXTRACTOR.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
     clean_card_data = CLEANER.clean_card_data(card_data)
+
+    card_data.to_csv("original-database-tables/card_details.csv")
+    clean_card_data.to_csv("completed-database-tables/dim_card_details.csv")
     CONNECTOR.upload_to_db(clean_card_data, "dim_card_details", ENGINE) 
 
 def dim_store_details():
@@ -40,12 +46,18 @@ def dim_store_details():
     number_stores = EXTRACTOR.list_number_of_stores(num_of_store_endpoint, api_key)
     stores = EXTRACTOR.retrieve_stores_data(store_details_endpoint, number_stores, api_key)
     clean_stores = CLEANER.clean_store_data(stores)
+
+    stores.to_csv("original-database-tables/stores.csv")
+    clean_stores.to_csv("completed-database-tables/dim_store_details.csv")
     CONNECTOR.upload_to_db(clean_stores, 'dim_store_details', ENGINE)
 
 def dim_products():
     s3_data = EXTRACTOR.extract_from_s3()
     s3_data = CLEANER.convert_product_weights(s3_data)
     clean_s3_data = CLEANER.clean_products_data(s3_data)
+
+    s3_data.to_csv("original-database-tables/products.csv")
+    clean_s3_data.to_csv("completed-database-tables/dim_products.csv")
     CONNECTOR.upload_to_db(clean_s3_data, 'dim_products', ENGINE)
 
 def orders_table():
@@ -54,6 +66,9 @@ def orders_table():
     orders_df = EXTRACTOR.read_rds_table(tables[2], remote_engine)
 
     clean_orders = CLEANER.clean_orders_data(orders_df)
+
+    orders_df.to_csv("original-database-tables/orders.csv")
+    clean_orders.to_csv("completed-database-tables/orders_table.csv")
     CONNECTOR.upload_to_db(clean_orders, 'orders_table', ENGINE)
 
 def dim_date_times():
@@ -61,6 +76,9 @@ def dim_date_times():
 
     date_data = EXTRACTOR.extract_from_s3_JSON(address)
     cleaned_date_data = CLEANER.clean_date_table(date_data)
+
+    date_data.to_csv("original-database-tables/dates.csv")
+    cleaned_date_data.to_csv("completed-database-tables/dim_date_times.csv")
     CONNECTOR.upload_to_db(cleaned_date_data, 'dim_date_times', ENGINE)
 
 

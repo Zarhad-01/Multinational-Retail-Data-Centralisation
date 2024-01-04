@@ -14,6 +14,9 @@ The project has expanded to include database design and management for a multina
 
 Key additions include SQL scripts for table creation, data integrity enforcement, schema management, and complex queries for business insights. These developments enhance the project's aim to facilitate robust data analysis and storage, ensuring consistent and reliable data quality.
 
+## Entity Relationship Diagram of Completed Database
+![Entity Relationship diagram](<assets/entity-relationship-diagram.png>)
+
 
 ## Installation
 
@@ -41,6 +44,16 @@ pip install pandas numpy sqlalchemy psycopg2 boto3 pyyaml tabula-py requests
 
 4. **AWS Configuration:**
 - Ensure you have AWS credentials set up for accessing RDS and S3 services. This typically involves setting up `~/.aws/credentials`.
+
+## Database Tables
+
+After the cleaning and processing steps, the database tables have been organized into two main folders to highlight the changes and improvements made:
+
+- `completed-database-tables/`: This directory contains the final versions of the database tables after cleaning and optimization. If you're interested in the cleaned data ready for analysis or database storage, please refer to this folder.
+
+- `original-database-tables/`: This directory holds the original versions of the database tables before cleaning. If you wish to see the data in its initial state or compare it with the cleaned versions, this is where you can find those files.
+
+Feel free to explore these folders to better understand the transformations applied to the data as part of the Multinational Retail Data Centralisation project.
 
 ## Usage
 ### Python Scripts:
@@ -72,7 +85,7 @@ The project is organized into the following directories and files:
   - `main.py` - Main script to run the data processing tasks.
 
 ### SQL Scripts:
-- `sql/`
+- `sql-queries/`
   - `create_database_schema/` - Scripts for creating the database schema.
     - `1_orders_table.sql` - Creates the orders table.
     - `2_dim_users_table.sql` - Sets up the users table.
@@ -94,10 +107,31 @@ The project is organized into the following directories and files:
     - `8_german_stores.sql` - Assesses German store sales.
     - `9_sales_speed.sql` - Evaluates the speed of sales.
 
+### Database Tables:
+- `completed-database-tables/` - Contains the cleaned and optimized versions of the database tables.
+  - `dim_card_details.csv` - Cleaned card details data.
+  - `dim_date_times.csv` - Cleaned date and time data.
+  - `dim_products.csv` - Cleaned products data.
+  - `dim_store_details.csv` - Cleaned store details data.
+  - `dim_user_table.csv` - Cleaned user data.
+  - `orders_table.csv` - Cleaned orders data.
+- `original-database-tables/` - Contains the original, uncleaned versions of the database tables.
+  - `card_details.csv` - Original card details data.
+  - `dates.csv` - Original date and time data.
+  - `orders.csv` - Original orders data.
+  - `products.csv` - Original products data.
+  - `stores.csv` - Original store details data.
+  - `user_data.csv` - Original user data.
+
+### Assets:
+- `assets/`
+  - `entity-relationship-diagram.png` - Visual representation of the database schema.
 
 ### Miscellaneous:
 - `.gitignore` - Specifies files to be ignored by version control.
 - `README.md` - Project documentation in Markdown format.
+- `Blank diagram.png` - A blank diagram for potential use in documentation or presentation materials.
+
 
 ## License
 [MIT License](LICENSE)

@@ -2,6 +2,7 @@
 
 ## Table of Contents
 - [Project Description](#project-description)
+- [Entity Relationship Diagram](#entity-relationship-diagram-of-completed-database)
 - [Installation](#installation)
 - [Usage](#usage)
 - [File Structure](#file-structure)

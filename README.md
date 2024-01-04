@@ -131,8 +131,7 @@ The project is organized into the following directories and files:
 ### Miscellaneous:
 - `.gitignore` - Specifies files to be ignored by version control.
 - `README.md` - Project documentation in Markdown format.
-- `Blank diagram.png` - A blank diagram for potential use in documentation or presentation materials.
-
+- `LICENSE` - MIT Lisense information.
 
 ## License
 [MIT License](LICENSE)
